@@ -1,0 +1,59 @@
+name: Publish Hostinger preview
+
+on:
+  push:
+    branches:
+      - codex/recover-source
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hyperscale-hostinger-preview
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 10.4.1
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm exec vitest run --root . server/enquiries.test.ts
+      - run: pnpm build
+      - name: Add preview routing and search exclusion
+        run: |
+          printf '%s\n' \
+            '<IfModule mod_rewrite.c>' \
+            '  RewriteEngine On' \
+            '  RewriteBase /' \
+            '  RewriteRule ^index\.html$ - [L]' \
+            '  RewriteCond %{REQUEST_FILENAME} !-f' \
+            '  RewriteCond %{REQUEST_FILENAME} !-d' \
+            '  RewriteRule . /index.html [L]' \
+            '</IfModule>' \
+            '<IfModule mod_headers.c>' \
+            '  Header always set X-Robots-Tag "noindex, nofollow"' \
+            '</IfModule>' > dist/public/.htaccess
+      - name: Update the built preview branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin codex/hostinger-preview
+          git worktree add --detach ../hostinger-preview origin/codex/hostinger-preview
+          rsync -a --delete --exclude='.git' dist/public/ ../hostinger-preview/
+          cd ../hostinger-preview
+          git add -A
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Preview build from ${GITHUB_SHA::7}"
+          git push origin HEAD:codex/hostinger-preview

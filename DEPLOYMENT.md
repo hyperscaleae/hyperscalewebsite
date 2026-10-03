@@ -12,6 +12,19 @@ For a temporary website on Hostinger, use `HyperScale-Hostinger-static-preview-2
 
 This is a **static preview**. The Express enquiry endpoint is not in the ZIP, so the website form remains unavailable and the age-gated WhatsApp/email links are shown instead. Confirm those contact destinations are monitored before inviting visitors. To enable the form later, deploy the Node app through Hostinger's supported Node.js hosting flow and configure the server-only SMTP values in `README.md`; uploading an SQL file will not enable it. Hostinger documents [File Manager uploads](https://www.hostinger.com/tutorials/how-to-upload-your-website/) and its separate [Node.js web app deployment](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/).
 
+## Temporary subdomain with automatic GitHub updates
+
+The GitHub repository `hyperscaleae/hyperscalewebsite` has two branches for this preview:
+
+- `codex/recover-source` contains the editable React and Express source. Push reviewed website changes here.
+- `codex/hostinger-preview` contains only built static files, with `index.html` and `.htaccess` at the root. Hostinger should deploy **this** branch to a temporary static subdomain. A GitHub Actions workflow checks, tests, builds, and updates it after each push to the source branch.
+
+To connect an existing temporary subdomain, first download a backup of its current `public_html`. The Git deployment can overwrite files in the chosen target directory. In Hostinger hPanel, open **Websites → the temporary website → Dashboard → Advanced → Git**, connect the `hyperscaleae` GitHub account, choose `hyperscaleae/hyperscalewebsite`, select branch `codex/hostinger-preview`, set the root directory to that temporary website's `public_html`, and deploy. Turn on **Auto-deployment** for that branch and inspect the deployment history. Never target another website's `public_html`. See [Hostinger's current Git deployment guide](https://www.hostinger.com/support/1583302-how-to-deploy-a-git-repository-in-hostinger/) for the current hPanel screens.
+
+Check `/`, `/services`, `/work`, and `/contact` on the temporary URL, including a direct refresh of an inner route. Check that the branding loads and that `/api/enquiries/available` is unavailable on this static preview. The website must not claim that the form delivers email until a Node deployment and SMTP test are complete. The `.htaccess` adds a `noindex` header for this review site; it does not password-protect it.
+
+If Hostinger's Git screen does not offer the existing website or branch, do not connect the source branch as a substitute: its root contains development files, not a deployable static site. Check the hosting plan and website type, then use the ZIP above or the separate [Node.js GitHub integration](https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/) on a supported plan.
+
 ## Fast preview: Cloudflare Pages Direct Upload
 
 The prepared `HyperScale-preview-2026-10-03-branded.zip` contains the latest built public website, including the restored layouts and supplied HyperScale logo. It includes a `noindex` response header for this review version. The preview URL is still public to anyone who has the link; `noindex` is not password protection.
