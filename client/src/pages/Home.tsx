@@ -5,6 +5,7 @@ import { Link, useLocation, useParams } from "wouter";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { InsightInvite } from "@/components/InsightInvite";
 import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronRight, CircleDot, Globe2, Mail, Menu, MessageCircle, Moon, PhoneCall, Sun, X } from "lucide-react";
 
 const heroImage = "/manus-storage/hyperscale-hero-h-transparent-clean_8574ddfd.png";
@@ -78,6 +79,7 @@ const testimonialSlots: TestimonialSlot[] = [
 
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<"work" | "services" | null>(null);
   const [location] = useLocation();
   const { locale, toggleLocale, t } = useLocale();
   const { theme, toggleTheme } = useTheme();
@@ -89,16 +91,29 @@ export function Shell({ children }: { children: ReactNode }) {
     return () => observer.disconnect();
   }, [location]);
   const closeMenu = () => setOpen(false);
-  const links = [
-    [t("Work", "أعمالنا"), "/work"],
-    [t("Services", "خدماتنا"), "/services"],
-    [t("Insights", "رؤى"), "/insights"],
-    [t("About", "من نحن"), "/about"],
-  ];
+  const closeNavigation = () => { closeMenu(); setActiveMenu(null); };
   return <div className="site-shell">
     <header className="topbar"><div className="topbar-inner">
       <Link href="/" className="brand" onClick={closeMenu} aria-label={t("HyperScale home", "العودة إلى الرئيسية")}><img src={markImage} alt="" /><span><strong>HYPERSCALE</strong><small>Marketing</small></span></Link>
-      <nav className={open ? "nav-open" : ""} aria-label={t("Main navigation", "القائمة الرئيسية")}>{links.map(([label, href]) => <Link key={href} href={href} onClick={closeMenu} aria-current={location === href ? "page" : undefined}>{label}</Link>)}<Link href="/contact" className="nav-expert" onClick={closeMenu}>{t("Start a project", "ابدأ مشروعك")} <ArrowUpRight size={16} /></Link></nav>
+      <nav className={open ? "nav-open" : ""} aria-label={t("Main navigation", "القائمة الرئيسية")} onKeyDown={event => { if (event.key === "Escape") setActiveMenu(null); }}>
+        <div className="nav-dropdown" onMouseEnter={() => setActiveMenu("work")} onMouseLeave={() => setActiveMenu(null)}>
+          <button type="button" aria-expanded={activeMenu === "work"} aria-controls="work-menu" onClick={() => setActiveMenu(activeMenu === "work" && !window.matchMedia("(hover: hover)").matches ? null : "work")}>{t("Work", "أعمالنا")}</button>
+          <div id="work-menu" className={`nav-dropdown-panel ${activeMenu === "work" ? "is-open" : ""}`} inert={activeMenu !== "work"}>
+            <div className="nav-dropdown-lead"><span>{t("Selected work", "أعمال مختارة")}</span><strong>{t("Built for real businesses.", "عمل صُمم لشركات حقيقية.")}</strong><Link href="/work" onClick={closeNavigation}>{t("View all work", "شاهد كل الأعمال")}</Link></div>
+            <div className="nav-dropdown-links"><Link href="/work/alora-media" onClick={closeNavigation}>Alora Media</Link><Link href="/work/leaders-care" onClick={closeNavigation}>Leaders Care GC</Link><Link href="/work/al-khalil-foods" onClick={closeNavigation}>Al Khalil Foods</Link><Link href="/work/zyva-solutions" onClick={closeNavigation}>Zyva Solutions</Link></div>
+          </div>
+        </div>
+        <div className="nav-dropdown" onMouseEnter={() => setActiveMenu("services")} onMouseLeave={() => setActiveMenu(null)}>
+          <button type="button" aria-expanded={activeMenu === "services"} aria-controls="services-menu" onClick={() => setActiveMenu(activeMenu === "services" && !window.matchMedia("(hover: hover)").matches ? null : "services")}>{t("Services", "خدماتنا")}</button>
+          <div id="services-menu" className={`nav-dropdown-panel ${activeMenu === "services" ? "is-open" : ""}`} inert={activeMenu !== "services"}>
+            <div className="nav-dropdown-lead"><span>{t("What we do", "ماذا نقدم")}</span><strong>{t("A clearer way forward.", "خطوة تالية أوضح.")}</strong><Link href="/services" onClick={closeNavigation}>{t("View all services", "شاهد كل الخدمات")}</Link></div>
+            <div className="nav-dropdown-links"><Link href="/services/websites" onClick={closeNavigation}>{t("Websites & conversion", "المواقع وتحسين التحويل")}</Link><Link href="/services/performance" onClick={closeNavigation}>{t("Performance marketing", "التسويق بالأداء")}</Link><Link href="/services/strategy" onClick={closeNavigation}>{t("Growth strategy", "استراتيجية النمو")}</Link><Link href="/services/commerce" onClick={closeNavigation}>{t("E-commerce growth", "نمو التجارة الإلكترونية")}</Link></div>
+          </div>
+        </div>
+        <Link href="/insights" onClick={closeNavigation} aria-current={location === "/insights" ? "page" : undefined}>{t("Insights", "رؤى")}</Link>
+        <Link href="/about" onClick={closeNavigation} aria-current={location === "/about" ? "page" : undefined}>{t("About", "من نحن")}</Link>
+        <Link href="/contact" className="nav-expert" onClick={closeNavigation}>{t("Start a project", "ابدأ مشروعك")}</Link>
+      </nav>
       <button className="menu-button" type="button" aria-label={open ? t("Close menu", "إغلاق القائمة") : t("Open menu", "فتح القائمة")} aria-expanded={open} onClick={() => setOpen(value => !value)}>{open ? <X /> : <Menu />}</button>
     </div></header>
     <aside className="side-tools" aria-label={t("Display options", "خيارات العرض")}>
@@ -106,6 +121,7 @@ export function Shell({ children }: { children: ReactNode }) {
       <button type="button" onClick={toggleTheme} aria-label={theme === "dark" ? t("Switch to light mode", "الوضع الفاتح") : t("Switch to dark mode", "الوضع الداكن")} title={theme === "dark" ? t("Light mode", "الوضع الفاتح") : t("Dark mode", "الوضع الداكن")}>{theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}</button>
     </aside>
     {children}
+    <InsightInvite />
     <div className="floating-contact" aria-label={t("Contact HyperScale", "تواصل مع هايبرسكيل")}>
       <a href="https://wa.me/971566997831" target="_blank" rel="noopener noreferrer" aria-label={t("WhatsApp HyperScale", "تواصل عبر واتساب")} title="WhatsApp"><MessageCircle size={20} /></a>
       <a href="tel:+971566997831" aria-label={t("Call HyperScale", "اتصل بهايبرسكيل")} title={t("Call", "اتصل")}><PhoneCall size={19} /></a>

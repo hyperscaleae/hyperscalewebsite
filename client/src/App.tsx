@@ -61,7 +61,7 @@ function Router() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark" switchable>
+      <ThemeProvider defaultTheme="light" switchable>
         <LocaleProvider>
         <TooltipProvider>
           <PageMetadata />
