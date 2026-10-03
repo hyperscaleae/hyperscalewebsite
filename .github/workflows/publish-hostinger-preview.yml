@@ -33,6 +33,7 @@ jobs:
       - run: pnpm build
       - name: Add preview routing and search exclusion
         run: |
+          printf '%s\n' "$GITHUB_SHA" > dist/public/preview-build.txt
           printf '%s\n' \
             '<IfModule mod_rewrite.c>' \
             '  RewriteEngine On' \
