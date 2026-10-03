@@ -1,0 +1,32 @@
+import { Link } from "wouter";
+import { useLocale } from "@/contexts/LocaleContext";
+import { Footer } from "./Experience";
+import { Shell } from "./Home";
+
+type LegalKind = "privacy" | "terms" | "copyright";
+
+function LegalPage({ kind }: { kind: LegalKind }) {
+  const { t } = useLocale();
+  const title = kind === "privacy" ? t("Privacy Policy", "سياسة الخصوصية") : kind === "terms" ? t("Terms of Use", "شروط الاستخدام") : t("Copyright Policy", "سياسة حقوق النشر");
+  return <Shell><main className="experience xp-inner xp-legal"><Link className="xp-back" href="/">← {t("Home", "الرئيسية")}</Link><span className="xp-eyebrow">{t("Legal information", "معلومات قانونية")}</span><h1>{title}</h1><p>{t("Updated 3 October 2026. The legal business name and postal address still require confirmation before final publication.", "تم التحديث في ٣ أكتوبر ٢٠٢٦. لا يزال الاسم القانوني للشركة وعنوانها البريدي بحاجة إلى تأكيد قبل النشر النهائي.")}</p>
+    {kind === "privacy" && <>
+      <h2>{t("Information we collect", "المعلومات التي نجمعها")}</h2><p>{t("When the enquiry form is enabled, we collect the contact and project details you submit so we can reply. We check the age you enter before showing contact fields; the age is checked again by the server and discarded. We do not create visitor accounts or accept public uploads.", "عند تفعيل نموذج الاستفسار، نجمع بيانات التواصل والمشروع التي ترسلها حتى نتمكن من الرد. نتحقق من العمر قبل إظهار حقول التواصل، ويتحقق منه الخادم مرة أخرى ثم يتخلص منه. لا ننشئ حسابات للزوار ولا نقبل تحميل محتوى عام.")}</p>
+      <h2>{t("Service providers", "مزودو الخدمات")}</h2><p>{t("Hostinger hosts the temporary website and processes normal web requests, including IP addresses in server logs. GitHub hosts the website source and deployment files; visitors do not need to contact GitHub to view the site. The enquiry email provider has not been selected; its name will be added before form delivery is enabled. WhatsApp, Instagram and public client websites open only when you choose their links.", "تستضيف هوستنجر الموقع المؤقت وتعالج طلبات الويب المعتادة، بما فيها عناوين IP في سجلات الخادم. تستضيف جيت هب ملفات المصدر والنشر ولا يحتاج الزائر إلى الاتصال بها لعرض الموقع. لم نحدد مزود البريد الخاص بالاستفسارات بعد، وسنضيف اسمه قبل تفعيل إرسال النموذج. لا تفتح واتساب وإنستغرام ومواقع العملاء العامة إلا باختيارك روابطها.")}</p>
+      <h2>{t("Preferences and tracking", "التفضيلات والتتبع")}</h2><p>{t("This site stores your language and light/dark theme choice in your browser. It does not currently load analytics, session replay or advertising trackers. Fonts and portfolio previews are served from this site. We do not load an Instagram embed on page view.", "يحفظ الموقع اختيار اللغة والوضع الفاتح أو الداكن في متصفحك. لا يحمّل حاليًا أدوات تحليل أو تسجيل جلسات أو تتبع إعلاني. تُقدّم الخطوط ومعاينات الأعمال من هذا الموقع. لا نحمّل محتوى إنستغرام المضمن عند فتح الصفحة.")}</p>
+      <h2>{t("Your choices", "خياراتك")}</h2><p>{t("To request access to or deletion of an enquiry, write to", "لطلب الوصول إلى استفسارك أو حذفه، راسل")} <a href="mailto:hello@hyperscale.marketing">hello@hyperscale.marketing</a>. {t("The business retention schedule remains to be confirmed.", "لا تزال مدة الاحتفاظ بالبيانات بحاجة إلى تحديد.")}</p>
+    </>}
+    {kind === "terms" && <>
+      <h2>{t("Using the website", "استخدام الموقع")}</h2><p>{t("This website describes HyperScale services and selected work. An enquiry does not establish a client relationship or guarantee a proposal. Scope, fees and deliverables require a separate written agreement.", "يعرض هذا الموقع خدمات هايبرسكيل وأعمالًا مختارة. لا ينشئ الاستفسار علاقة تعاقدية ولا يضمن تقديم عرض. يتطلب نطاق العمل والرسوم والمخرجات اتفاقًا مكتوبًا مستقلًا.")}</p>
+      <h2>{t("Content and external sites", "المحتوى والمواقع الخارجية")}</h2><p>{t("Website text, design, client marks and screenshots remain with their respective rights holders. Public project and social links open third-party sites that may change independently. We are not responsible for their content or privacy practices.", "تبقى حقوق نصوص الموقع وتصميمه وعلامات العملاء وصور مواقعهم لأصحابها. تفتح روابط المشاريع والحسابات الاجتماعية مواقع خارجية قد يتغير محتواها بشكل مستقل. لسنا مسؤولين عن محتواها أو ممارسات الخصوصية فيها.")}</p>
+      <h2>{t("Contact", "التواصل")}</h2><p>{t("Questions about these terms can be sent to", "يمكن إرسال الأسئلة المتعلقة بهذه الشروط إلى")} <a href="mailto:hello@hyperscale.marketing">hello@hyperscale.marketing</a>.</p>
+    </>}
+    {kind === "copyright" && <>
+      <h2>{t("Report a concern", "الإبلاغ عن مشكلة")}</h2><p>{t("Visitors cannot upload or publish content on this website. If you believe displayed material infringes your copyright, email", "لا يستطيع الزوار تحميل محتوى أو نشره على هذا الموقع. إذا اعتقدت أن مادة معروضة تنتهك حقوق نشرك، أرسل رسالة إلى")} <a href="mailto:hello@hyperscale.marketing?subject=Copyright%20notice">hello@hyperscale.marketing</a> {t("with the work you own, the exact URL, your contact details, a good-faith statement that the use is unauthorized, a statement that your notice is accurate and you may act for the owner, and your signature.", "تتضمن وصف العمل الذي تملكه والرابط الدقيق وبيانات التواصل وإقرارًا بحسن النية بأن الاستخدام غير مصرح به وإقرارًا بصحة البلاغ وأهليتك للتصرف نيابة عن صاحب الحق وتوقيعك.")}</p>
+      <h2>{t("Repeat infringement and designated agent", "تكرار الانتهاك والوكيل المعين")}</h2><p>{t("If visitor publishing is added, a repeat-infringer process must be implemented before launch. No US DMCA designated agent is registered in this code; the site owner must register and publish agent details if that feature is introduced. The email above is a general copyright contact, not a registered agent.", "إذا أضيف نشر المحتوى من قبل الزوار، يجب تطبيق إجراء للتعامل مع تكرار الانتهاك قبل الإطلاق. لا يتضمن هذا المشروع وكيلًا معينًا مسجلًا وفق قانون DMCA الأمريكي؛ ويجب على مالك الموقع تسجيل الوكيل ونشر بياناته إذا أضيفت هذه الميزة. البريد أعلاه جهة اتصال عامة لحقوق النشر، وليس وكيلًا مسجلًا.")}</p>
+    </>}
+  </main><Footer /></Shell>;
+}
+
+export function PrivacyPage() { return <LegalPage kind="privacy" />; }
+export function TermsPage() { return <LegalPage kind="terms" />; }
+export function CopyrightPage() { return <LegalPage kind="copyright" />; }

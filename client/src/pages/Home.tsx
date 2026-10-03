@@ -1,9 +1,11 @@
 /* HyperScale Signal / Scale direction: editorial dark field, precise cobalt structure, mint conversion signals, and interaction that turns every section into a measurable next move. */
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { Link } from "wouter";
+import { Link, useLocation, useParams } from "wouter";
 import { EnquiryForm } from "@/components/EnquiryForm";
-import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronDown, ChevronRight, CircleDot, Globe2, Mail, Menu, MessageCircle, PhoneCall, X } from "lucide-react";
+import { useLocale } from "@/contexts/LocaleContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronRight, CircleDot, Globe2, Mail, Menu, MessageCircle, Moon, PhoneCall, Sun, X } from "lucide-react";
 
 const heroImage = "/manus-storage/hyperscale-hero-h-transparent-clean_8574ddfd.png";
 const markImage = "/brand/hyperscale-h.png";
@@ -74,17 +76,41 @@ const testimonialSlots: TestimonialSlot[] = [
   { company: "Client story 03", speaker: "Verified quote pending", role: "Add client name & role", quote: "Your approved client quote will live here.", logoText: "CLIENT LOGO" },
 ];
 
-function Shell({ children }: { children: ReactNode }) {
+export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [location] = useLocation();
+  const { locale, toggleLocale, t } = useLocale();
+  const { theme, toggleTheme } = useTheme();
   useEffect(() => {
-    const obs = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("reveal-visible"); }), { threshold: 0.1 });
-    document.querySelectorAll(".reveal").forEach((element) => obs.observe(element));
-    return () => obs.disconnect();
-  }, []);
-  const links = [["Work", "/work"], ["About", "/about"]];
-  const closeMenu = () => { setOpen(false); setServicesOpen(false); };
-  return <div className="site-shell"><div className="scale-rail" aria-hidden="true"><span /><b>01</b><i>growth system</i></div><header className="topbar"><div className="topbar-inner"><Link href="/" className="brand" onClick={closeMenu}><SiteImage src={markImage} alt="" /><span><strong>HYPERSCALE</strong><small>Marketing</small></span></Link><nav className={open ? "nav-open" : ""}>{links.map(([label, href]) => <Link key={href} href={href} onClick={closeMenu}>{label}</Link>)}<div className={`nav-services ${servicesOpen ? "services-open" : ""}`}><button className="nav-services-trigger" type="button" onClick={() => setServicesOpen((value) => !value)} aria-expanded={servicesOpen} aria-haspopup="true">Services <ChevronRight size={13} /></button><div className="services-mega-menu"><div className="mega-menu-intro"><span>04 / CAPABILITIES</span><strong>Build the engine<br />behind growth.</strong></div><div className="mega-menu-links"><Link href="/services" onClick={closeMenu}><span className="mega-icon"><ArrowUpRight size={14} /></span><span><strong>Performance Marketing</strong><small>Turn attention into demand.</small></span></Link><Link href="/services" onClick={closeMenu}><span className="mega-icon"><CircleDot size={14} /></span><span><strong>Growth Strategy</strong><small>Find the highest-leverage move.</small></span></Link><Link href="/services" onClick={closeMenu}><span className="mega-icon"><ChevronRight size={14} /></span><span><strong>AI &amp; Systems</strong><small>Make the machine work harder.</small></span></Link><Link href="/services" onClick={closeMenu}><span className="mega-icon"><Globe2 size={14} /></span><span><strong>Digital Experience</strong><small>Design journeys that convert.</small></span></Link></div></div></div><div className="nav-actions"><span className="nav-language"><Globe2 size={14} /> English</span><Link className="nav-expert" href="/contact" onClick={closeMenu}>Speak to an expert <ArrowUpRight size={15} /></Link><a className="nav-icon" href="mailto:hello@hyperscale.marketing" aria-label="Email HyperScale"><Mail size={16} /></a><a className="nav-icon" href="tel:+971566997831" aria-label="Call HyperScale"><PhoneCall size={16} /></a></div></nav><button className="menu-button" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen((value) => !value)}>{open ? <X /> : <Menu />}</button></div></header>{children}</div>;
+    const observer = new IntersectionObserver(entries => entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add("reveal-visible");
+    }), { threshold: 0.08 });
+    document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
+    return () => observer.disconnect();
+  }, [location]);
+  const closeMenu = () => setOpen(false);
+  const links = [
+    [t("Work", "أعمالنا"), "/work"],
+    [t("Services", "خدماتنا"), "/services"],
+    [t("Insights", "رؤى"), "/insights"],
+    [t("About", "من نحن"), "/about"],
+  ];
+  return <div className="site-shell">
+    <header className="topbar"><div className="topbar-inner">
+      <Link href="/" className="brand" onClick={closeMenu} aria-label={t("HyperScale home", "العودة إلى الرئيسية")}><img src={markImage} alt="" /><span><strong>HYPERSCALE</strong><small>Marketing</small></span></Link>
+      <nav className={open ? "nav-open" : ""} aria-label={t("Main navigation", "القائمة الرئيسية")}>{links.map(([label, href]) => <Link key={href} href={href} onClick={closeMenu} aria-current={location === href ? "page" : undefined}>{label}</Link>)}<Link href="/contact" className="nav-expert" onClick={closeMenu}>{t("Start a project", "ابدأ مشروعك")} <ArrowUpRight size={16} /></Link></nav>
+      <button className="menu-button" type="button" aria-label={open ? t("Close menu", "إغلاق القائمة") : t("Open menu", "فتح القائمة")} aria-expanded={open} onClick={() => setOpen(value => !value)}>{open ? <X /> : <Menu />}</button>
+    </div></header>
+    <aside className="side-tools" aria-label={t("Display options", "خيارات العرض")}>
+      <button type="button" onClick={toggleLocale} aria-label={locale === "en" ? "Switch to Arabic" : "التبديل إلى الإنجليزية"} title={locale === "en" ? "العربية" : "English"}>{locale === "en" ? "ع" : "EN"}</button>
+      <button type="button" onClick={toggleTheme} aria-label={theme === "dark" ? t("Switch to light mode", "الوضع الفاتح") : t("Switch to dark mode", "الوضع الداكن")} title={theme === "dark" ? t("Light mode", "الوضع الفاتح") : t("Dark mode", "الوضع الداكن")}>{theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}</button>
+    </aside>
+    {children}
+    <div className="floating-contact" aria-label={t("Contact HyperScale", "تواصل مع هايبرسكيل")}>
+      <a href="https://wa.me/971566997831" target="_blank" rel="noopener noreferrer" aria-label={t("WhatsApp HyperScale", "تواصل عبر واتساب")} title="WhatsApp"><MessageCircle size={20} /></a>
+      <a href="tel:+971566997831" aria-label={t("Call HyperScale", "اتصل بهايبرسكيل")} title={t("Call", "اتصل")}><PhoneCall size={19} /></a>
+    </div>
+  </div>;
 }
 
 function SectionEyebrow({ children, number }: { children: ReactNode; number?: string }) { return <div className="eyebrow"><span>{number || "//"}</span><span>{children}</span></div>; }
