@@ -80,6 +80,7 @@ const testimonialSlots: TestimonialSlot[] = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<"work" | "services" | null>(null);
+  const menuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [location] = useLocation();
   const { locale, toggleLocale, t } = useLocale();
   const { theme, toggleTheme } = useTheme();
@@ -90,22 +91,34 @@ export function Shell({ children }: { children: ReactNode }) {
     document.querySelectorAll(".reveal").forEach(element => observer.observe(element));
     return () => observer.disconnect();
   }, [location]);
+  useEffect(() => () => {
+    if (menuCloseTimer.current) clearTimeout(menuCloseTimer.current);
+  }, []);
+  const cancelMenuClose = () => {
+    if (menuCloseTimer.current) clearTimeout(menuCloseTimer.current);
+    menuCloseTimer.current = null;
+  };
+  const showMenu = (menu: "work" | "services") => { cancelMenuClose(); setActiveMenu(menu); };
+  const scheduleMenuClose = () => {
+    cancelMenuClose();
+    menuCloseTimer.current = setTimeout(() => setActiveMenu(null), 320);
+  };
   const closeMenu = () => setOpen(false);
-  const closeNavigation = () => { closeMenu(); setActiveMenu(null); };
+  const closeNavigation = () => { cancelMenuClose(); closeMenu(); setActiveMenu(null); };
   return <div className="site-shell">
     <header className="topbar"><div className="topbar-inner">
       <Link href="/" className="brand" onClick={closeMenu} aria-label={t("HyperScale home", "العودة إلى الرئيسية")}><img src={markImage} alt="" /><span><strong>HYPERSCALE</strong><small>Marketing</small></span></Link>
-      <nav className={open ? "nav-open" : ""} aria-label={t("Main navigation", "القائمة الرئيسية")} onKeyDown={event => { if (event.key === "Escape") setActiveMenu(null); }}>
-        <div className="nav-dropdown" onMouseEnter={() => setActiveMenu("work")} onMouseLeave={() => setActiveMenu(null)}>
-          <button type="button" aria-expanded={activeMenu === "work"} aria-controls="work-menu" onClick={() => setActiveMenu(activeMenu === "work" && !window.matchMedia("(hover: hover)").matches ? null : "work")}>{t("Work", "أعمالنا")}</button>
-          <div id="work-menu" className={`nav-dropdown-panel ${activeMenu === "work" ? "is-open" : ""}`} inert={activeMenu !== "work"}>
+      <nav className={open ? "nav-open" : ""} aria-label={t("Main navigation", "القائمة الرئيسية")} onKeyDown={event => { if (event.key === "Escape") { cancelMenuClose(); setActiveMenu(null); } }}>
+        <div className="nav-dropdown" onMouseEnter={() => showMenu("work")} onMouseLeave={scheduleMenuClose}>
+          <button type="button" aria-expanded={activeMenu === "work"} aria-controls="work-menu" onClick={() => { cancelMenuClose(); setActiveMenu(activeMenu === "work" && !window.matchMedia("(hover: hover)").matches ? null : "work"); }}>{t("Work", "أعمالنا")}</button>
+          <div id="work-menu" className={`nav-dropdown-panel ${activeMenu === "work" ? "is-open" : ""}`} inert={activeMenu !== "work"} onMouseEnter={cancelMenuClose}>
             <div className="nav-dropdown-lead"><span>{t("Selected work", "أعمال مختارة")}</span><strong>{t("Built for real businesses.", "عمل صُمم لشركات حقيقية.")}</strong><Link href="/work" onClick={closeNavigation}>{t("View all work", "شاهد كل الأعمال")}</Link></div>
             <div className="nav-dropdown-links"><Link href="/work/alora-media" onClick={closeNavigation}>Alora Media</Link><Link href="/work/leaders-care" onClick={closeNavigation}>Leaders Care GC</Link><Link href="/work/al-khalil-foods" onClick={closeNavigation}>Al Khalil Foods</Link><Link href="/work/zyva-solutions" onClick={closeNavigation}>Zyva Solutions</Link></div>
           </div>
         </div>
-        <div className="nav-dropdown" onMouseEnter={() => setActiveMenu("services")} onMouseLeave={() => setActiveMenu(null)}>
-          <button type="button" aria-expanded={activeMenu === "services"} aria-controls="services-menu" onClick={() => setActiveMenu(activeMenu === "services" && !window.matchMedia("(hover: hover)").matches ? null : "services")}>{t("Services", "خدماتنا")}</button>
-          <div id="services-menu" className={`nav-dropdown-panel ${activeMenu === "services" ? "is-open" : ""}`} inert={activeMenu !== "services"}>
+        <div className="nav-dropdown" onMouseEnter={() => showMenu("services")} onMouseLeave={scheduleMenuClose}>
+          <button type="button" aria-expanded={activeMenu === "services"} aria-controls="services-menu" onClick={() => { cancelMenuClose(); setActiveMenu(activeMenu === "services" && !window.matchMedia("(hover: hover)").matches ? null : "services"); }}>{t("Services", "خدماتنا")}</button>
+          <div id="services-menu" className={`nav-dropdown-panel ${activeMenu === "services" ? "is-open" : ""}`} inert={activeMenu !== "services"} onMouseEnter={cancelMenuClose}>
             <div className="nav-dropdown-lead"><span>{t("What we do", "ماذا نقدم")}</span><strong>{t("A clearer way forward.", "خطوة تالية أوضح.")}</strong><Link href="/services" onClick={closeNavigation}>{t("View all services", "شاهد كل الخدمات")}</Link></div>
             <div className="nav-dropdown-links"><Link href="/services/websites" onClick={closeNavigation}>{t("Websites & conversion", "المواقع وتحسين التحويل")}</Link><Link href="/services/performance" onClick={closeNavigation}>{t("Performance marketing", "التسويق بالأداء")}</Link><Link href="/services/strategy" onClick={closeNavigation}>{t("Growth strategy", "استراتيجية النمو")}</Link><Link href="/services/commerce" onClick={closeNavigation}>{t("E-commerce growth", "نمو التجارة الإلكترونية")}</Link></div>
           </div>

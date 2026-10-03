@@ -235,6 +235,7 @@ html.dark body .site-shell .topbar-inner { background: rgba(7,20,17,.91); }
 .topbar .nav-dropdown > button[aria-expanded="true"]::after { transform: rotate(45deg); }
 .topbar .nav-dropdown-panel { position: absolute; top: 100%; inset-inline-start: auto; inset-inline-end: clamp(20px,4vw,68px); z-index: 20; display: grid; grid-template-columns: minmax(170px,.9fr) minmax(220px,1.1fr); gap: 35px; width: min(590px,calc(100vw - 40px)); padding: 28px; border: 1px solid var(--line); background: var(--ink); box-shadow: 0 25px 60px rgba(0,0,0,.16); opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-10px); transition: opacity .25s ease, transform .3s cubic-bezier(.2,.8,.2,1), visibility .25s; }
 .topbar .nav-dropdown-panel.is-open { opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0); }
+.topbar .nav-dropdown-panel::before { content: ""; position: absolute; inset-inline: 0; top: -34px; height: 34px; }
 .topbar .nav-dropdown-lead { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
 .topbar .nav-dropdown-lead span { color: var(--mint); font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .15em; }
 .topbar .nav-dropdown-lead strong { max-width: 190px; color: var(--paper); font-size: clamp(1.4rem,2vw,2rem); line-height: 1.05; }
@@ -252,6 +253,7 @@ html.dark body .site-shell .topbar-inner { background: rgba(7,20,17,.91); }
   html body .site-shell .topbar-inner { min-height: 70px; padding-inline: 18px; }
   .topbar .nav-dropdown-panel { position: static; display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%; max-height: 0; overflow: hidden; padding: 0; border: 0; box-shadow: none; opacity: 0; transform: none; transition: max-height .3s ease, opacity .25s ease, padding .3s ease; }
   .topbar .nav-dropdown-panel.is-open { max-height: 450px; padding: 15px 0; opacity: 1; }
+  .topbar .nav-dropdown-panel::before { display: none; }
   .topbar .nav-dropdown-lead strong { max-width: none; }
   .topbar .nav-dropdown-links { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 4px 10px; }
 }
