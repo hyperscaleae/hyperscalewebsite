@@ -45,8 +45,22 @@ export function EnquiryForm({ variant }: { variant: Variant }) {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!eligible || available !== true) return;
+    if (!eligible) return;
     const fields = new FormData(event.currentTarget);
+    if (fields.get("website")) return;
+    if (available !== true) {
+      const message = [
+        "Hello HyperScale, I have an enquiry:",
+        `Name: ${fields.get("name") || ""}`,
+        `Email: ${fields.get("email") || ""}`,
+        fields.get("phone") ? `Phone: ${fields.get("phone")}` : "",
+        fields.get("service") ? `Service: ${fields.get("service")}` : "",
+        fields.get("company") ? `Company: ${fields.get("company")}` : "",
+        fields.get("objectives") ? `Message: ${fields.get("objectives")}` : "",
+      ].filter(Boolean).join("\n");
+      window.location.assign(`https://wa.me/971566997831?text=${encodeURIComponent(message)}`);
+      return;
+    }
     setBusy(true);
     setError("");
     try {
@@ -80,29 +94,27 @@ export function EnquiryForm({ variant }: { variant: Variant }) {
   }
 
   return <div className={`enquiry-card enquiry-card-${variant} ${variant === "hero" ? "hero-form-card" : "growth-form"}`}>
-    <div className="enquiry-heading"><span className="enquiry-kicker">{t("START A CONVERSATION", "ابدأ محادثة")}</span><h3>{variant === "hero" ? t("Let’s talk growth.", "لنتحدث عن النمو.") : t("Tell us what you need.", "أخبرنا بما تحتاجه.")}</h3><p>{t("One quick question, then choose the easiest way to reach us.", "سؤال سريع واحد، ثم اختر أسهل طريقة للتواصل معنا.")}</p></div>
+    <div className="enquiry-heading"><span className="enquiry-kicker">{t("START A CONVERSATION", "ابدأ محادثة")}</span><h3>{variant === "hero" ? t("Let’s talk growth.", "لنتحدث عن النمو.") : t("Tell us about your project.", "أخبرنا عن مشروعك.")}</h3><p>{t("A few details are enough to get started.", "تكفي بعض التفاصيل لنبدأ الحديث.")}</p></div>
     <div className="age-card">
       <div className="age-card-icon"><ShieldCheck size={20} /></div>
-      <div className="age-card-copy"><span>{t("STEP 01 / 02", "الخطوة ١ / ٢")}</span><label htmlFor={ageId}>{t("How old are you?", "كم عمرك؟")}</label><p>{t("We ask before collecting any contact details. Your age is checked and discarded.", "نسأل قبل جمع أي بيانات اتصال. نتحقق من العمر ثم نتخلص منه.")}</p></div>
+      <div className="age-card-copy"><label htmlFor={ageId}>{t("First, how old are you?", "أولًا، كم عمرك؟")}</label><p>{t("We check your age before asking for contact details. It is not saved.", "نتحقق من عمرك قبل طلب بيانات التواصل ولا نحفظه.")}</p></div>
       <div className="age-input-wrap"><input id={ageId} type="number" min="0" max="120" step="1" inputMode="numeric" autoComplete="off" placeholder={t("Age", "العمر")} value={ageInput} onChange={(event) => setAgeInput(event.target.value)} aria-describedby={`${ageId}-hint`} /><span>{t("years", "سنة")}</span></div>
-      <span id={`${ageId}-hint`} className="age-hint">{t("Enter your age to continue", "أدخل عمرك للمتابعة")}</span>
+      <span id={`${ageId}-hint`} className="age-hint">{t("Enter your age to see the form", "أدخل عمرك لعرض النموذج")}</span>
     </div>
     {blocked && <p className="age-blocked" role="alert">{t("This enquiry form isn’t available for the age entered.", "نموذج الاستفسار غير متاح للعمر المدخل.")}</p>}
     {eligible && <div className="enquiry-reveal">
-      <div className="enquiry-ready"><Check size={15} /> {t("Age check complete", "اكتمل التحقق من العمر")} <span>{t("STEP 02 / 02", "الخطوة ٢ / ٢")}</span></div>
-      <ContactRoutes />
-      {available === false && <div className="form-offline" role="status"><strong>{t("The website form is being connected.", "نعمل على ربط نموذج الموقع.")}</strong><span>{t("You can use the WhatsApp or email links above while we connect it. We won’t ask you to fill out a form that cannot deliver.", "يمكنك استخدام واتساب أو البريد الإلكتروني أعلاه أثناء ربط النموذج. لن نطلب منك ملء نموذج لا يمكنه توصيل رسالتك.")}</span></div>}
-      {available === null && <p className="form-checking" role="status">{t("Checking the enquiry form…", "نتحقق من نموذج الاستفسار…")}</p>}
-      {available === true && !sent && <form onSubmit={submit}>
-        <div className="enquiry-field-grid"><label>{t("What should we call you?", "ما الاسم الذي نناديك به؟")}<input name="name" type="text" autoComplete="name" required maxLength={100} placeholder={t("Your name", "اسمك")} /></label><label>{t("What’s your email?", "ما بريدك الإلكتروني؟")}<input name="email" type="email" autoComplete="email" required maxLength={254} placeholder="you@company.com" /></label></div>
+      <div className="enquiry-ready"><Check size={15} /> {t("You can continue", "يمكنك المتابعة")}</div>
+      {variant !== "contact" && <ContactRoutes />}
+      {available === false && <p className="form-offline" role="status">{t("Your details will open in WhatsApp for you to review and send. Nothing is submitted by this website.", "ستفتح تفاصيلك في واتساب لتراجعها وترسلها بنفسك. لن يرسل هذا الموقع شيئًا.")}</p>}
+      {!sent && <form onSubmit={submit}>
+        <div className="enquiry-field-grid"><label>{t("Full name", "الاسم الكامل")}<input name="name" type="text" autoComplete="name" required maxLength={100} placeholder={t("Your full name", "اسمك الكامل")} /></label><label>{t("Email address", "البريد الإلكتروني")}<input name="email" type="email" autoComplete="email" required maxLength={254} placeholder="you@company.com" /></label></div>
         <div className="enquiry-field-grid"><label>{t("Phone", "الهاتف")} <span className="optional">{t("optional", "اختياري")}</span><input name="phone" type="tel" autoComplete="tel" maxLength={40} placeholder="+971…" /></label><label>{t("What can we help with?", "كيف يمكننا مساعدتك؟")} <span className="optional">{t("optional", "اختياري")}</span><select name="service" defaultValue=""><option value="">{t("Choose a service", "اختر خدمة")}</option>{services.map((service) => <option key={service} value={service}>{service}</option>)}</select></label></div>
-        {variant !== "hero" && <label>{t("Company", "الشركة")} <span className="optional">{t("optional", "اختياري")}</span><input name="company" type="text" autoComplete="organization" maxLength={120} placeholder={t("Your company", "اسم شركتك")} /></label>}
-        <label>{t("Tell us a little about your project", "أخبرنا قليلًا عن مشروعك")} <span className="optional">{t("optional", "اختياري")}</span><textarea name="objectives" rows={variant === "hero" ? 2 : 3} maxLength={3000} placeholder={t("A sentence or two is enough.", "تكفي جملة أو جملتان.")} /></label>
-        <label className="privacy-check"><input name="contactConsent" type="checkbox" required /><span>{t("I agree to be contacted about this enquiry. Read the", "أوافق على التواصل معي بشأن هذا الاستفسار. اقرأ")} <Link href="/privacy">{t("Privacy Policy", "سياسة الخصوصية")}</Link> {t("and", "و")} <Link href="/terms">{t("Terms", "الشروط")}</Link>.</span></label>
+        <label>{t("Your message", "رسالتك")}<textarea name="objectives" rows={variant === "hero" ? 3 : 5} required maxLength={3000} placeholder={t("Tell us what you are working on…", "أخبرنا عن مشروعك…")} /></label>
+        <label className="privacy-check"><input name="contactConsent" type="checkbox" required /><span>{t("I agree to share these details to discuss my enquiry. Read the", "أوافق على مشاركة هذه التفاصيل لمناقشة استفساري. اقرأ")} <Link href="/privacy">{t("Privacy Policy", "سياسة الخصوصية")}</Link> {t("and", "و")} <Link href="/terms">{t("Terms", "الشروط")}</Link>.</span></label>
         <input className="honeypot" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" />
         {error && <p className="form-error" role="alert">{error}</p>}
-        <button className="button button-mint enquiry-submit" type="submit" disabled={busy}>{busy ? t("Sending…", "جارٍ الإرسال…") : t("Send my enquiry", "أرسل استفساري")} <ArrowUpRight size={17} /></button>
-        <p className="form-reassurance">{t("No account. No mailing list. Just a reply to your enquiry.", "لا حساب ولا قائمة بريدية. فقط رد على استفسارك.")}</p>
+        <button className="button button-mint enquiry-submit" type="submit" disabled={busy}>{busy ? t("Sending…", "جارٍ الإرسال…") : available === true ? t("Send enquiry", "أرسل الاستفسار") : t("Continue in WhatsApp", "المتابعة في واتساب")}</button>
+        <p className="form-reassurance">{available === true ? t("We will reply to your enquiry.", "سنرد على استفسارك.") : t("Review your message in WhatsApp, then tap send there.", "راجع رسالتك في واتساب ثم اضغط إرسال هناك.")}</p>
       </form>}
       {sent && <div className="form-success" role="status"><Check size={20} /><span>{t("Your enquiry was sent. We’ll be in touch as soon as possible.", "تم إرسال استفسارك. سنتواصل معك في أقرب وقت ممكن.")}</span></div>}
     </div>}
