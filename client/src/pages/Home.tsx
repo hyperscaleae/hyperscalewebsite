@@ -125,7 +125,7 @@ export function Shell({ children }: { children: ReactNode }) {
         </div>
         <Link href="/insights" onClick={closeNavigation} aria-current={location === "/insights" ? "page" : undefined}>{t("Insights", "رؤى")}</Link>
         <Link href="/about" onClick={closeNavigation} aria-current={location === "/about" ? "page" : undefined}>{t("About", "من نحن")}</Link>
-        <Link href="/contact" className="nav-expert" onClick={closeNavigation}>{t("Start a project", "ابدأ مشروعك")}</Link>
+        <Link href="/inquiry" className="nav-expert" onClick={closeNavigation}>{t("Start a project", "ابدأ مشروعك")}</Link>
       </nav>
       <button className="menu-button" type="button" aria-label={open ? t("Close menu", "إغلاق القائمة") : t("Open menu", "فتح القائمة")} aria-expanded={open} onClick={() => setOpen(value => !value)}>{open ? <X /> : <Menu />}</button>
     </div></header>

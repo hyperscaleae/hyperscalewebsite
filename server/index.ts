@@ -22,7 +22,7 @@ async function startServer() {
 
   app.use(express.static(staticPath));
 
-  const pageRoutes = new Set(["/", "/work", "/work/websites", "/services", "/about", "/insights", "/contact", "/privacy", "/terms", "/copyright"]);
+  const pageRoutes = new Set(["/", "/work", "/work/websites", "/services", "/about", "/insights", "/contact", "/inquiry", "/feedback", "/dashboard", "/privacy", "/terms", "/copyright"]);
   app.get("*", (req, res) => {
     if (!pageRoutes.has(req.path)) res.status(404);
     res.sendFile(path.join(staticPath, "index.html"));

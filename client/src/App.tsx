@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import { LocaleProvider, useLocale } from "./contexts/LocaleContext";
 import { CopyrightPage, PrivacyPage, TermsPage } from "./pages/Legal";
 import { ExperienceAboutPage, ExperienceContactPage, ExperienceHomePage, ExperienceInsightPage, ExperienceInsightsPage, ExperienceNotFoundPage, ExperienceProjectPage, ExperienceServicePage, ExperienceServicesPage, ExperienceWorkPage } from "./pages/Experience";
+import Studio from "./pages/Studio";
+import { FeedbackPage, InquiryPage } from "./pages/WorkflowForms";
 
 const pageMeta: Record<string, [string, string]> = {
   "/": ["HyperScale — Growth Systems for Ambitious Brands", "HyperScale builds growth systems through strategy, creative, performance marketing, and digital experiences."],
@@ -16,6 +18,9 @@ const pageMeta: Record<string, [string, string]> = {
   "/about": ["About | HyperScale", "Learn about HyperScale's approach to connected growth systems."],
   "/insights": ["Insights | HyperScale", "Practical notes on websites, marketing and growth."],
   "/contact": ["Contact | HyperScale", "Send HyperScale an enquiry about your next stage of growth."],
+  "/inquiry": ["Project enquiry | HyperScale", "Tell HyperScale about your business and project."],
+  "/feedback": ["Client feedback | HyperScale", "Share feedback about your HyperScale project."],
+  "/dashboard": ["Studio dashboard | HyperScale", "Your local HyperScale client workspace."],
   "/privacy": ["Privacy Policy | HyperScale", "Read how HyperScale handles website enquiries and visitor data."],
   "/terms": ["Terms of Use | HyperScale", "Read the terms for using the HyperScale website."],
   "/copyright": ["Copyright Policy | HyperScale", "Read the copyright notice process for the HyperScale website."],
@@ -50,6 +55,9 @@ function Router() {
       <Route path="/insights" component={ExperienceInsightsPage} />
       <Route path="/insights/:slug" component={ExperienceInsightPage} />
       <Route path="/contact" component={ExperienceContactPage} />
+      <Route path="/inquiry" component={InquiryPage} />
+      <Route path="/feedback" component={FeedbackPage} />
+      <Route path="/dashboard" component={Studio} />
       <Route path="/privacy" component={PrivacyPage} />
       <Route path="/terms" component={TermsPage} />
       <Route path="/copyright" component={CopyrightPage} />
