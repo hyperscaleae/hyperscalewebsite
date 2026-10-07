@@ -98,6 +98,11 @@ export function createPortalRouter(
       path.join(os.homedir(), ".hyperscale-portal")
   );
   const origin = options.origin || process.env.PORTAL_ORIGIN || "";
+  const dataConfigured = Boolean(
+    options.directory || process.env.PORTAL_DATA_DIR
+  );
+  const publicDataDirectory =
+    /(?:^|[\\/])(public|public_html|hbuilds)(?:[\\/]|$)/i.test(directory);
   let db: Database | null = null;
   let key: Buffer;
   const filePath = path.join(directory, "workspace.enc");
@@ -188,8 +193,11 @@ export function createPortalRouter(
     res.setHeader("X-Content-Type-Options", "nosniff");
     res.setHeader("Referrer-Policy", "no-referrer");
     if (
-      production &&
-      (!origin.startsWith("https://") || !process.env.PORTAL_ENCRYPTION_KEY)
+      publicDataDirectory ||
+      (production &&
+        (!dataConfigured ||
+          !origin.startsWith("https://") ||
+          !process.env.PORTAL_ENCRYPTION_KEY))
     )
       return res
         .status(503)
@@ -203,8 +211,14 @@ export function createPortalRouter(
     if (!["GET", "HEAD"].includes(req.method) && !sameOrigin(req))
       return res.status(403).json({ error: "Request origin not allowed." });
     try {
-      const records=load();
-      if(production&&!records.users.length)return res.status(503).json({error:"The first administrator must be configured in the private hosting environment."});
+      const records = load();
+      if (production && !records.users.length)
+        return res
+          .status(503)
+          .json({
+            error:
+              "The first administrator must be configured in the private hosting environment.",
+          });
       next();
     } catch {
       res.status(503).json({
@@ -476,12 +490,10 @@ export function createPortalRouter(
     if (!p) return res.sendStatus(404);
     const input = z.object({ text: body }).parse(req.body);
     if (p.messages.length >= 2000)
-      return res
-        .status(400)
-        .json({
-          error:
-            "Project message limit reached. Export and archive this project.",
-        });
+      return res.status(400).json({
+        error:
+          "Project message limit reached. Export and archive this project.",
+      });
     const u = userFor(req)!;
     p.messages.push({
       id: randomBytes(16).toString("hex"),
@@ -547,11 +559,9 @@ export function createPortalRouter(
         1024 *
         1024;
       if (stored + req.body.length > maxBytes)
-        return res
-          .status(413)
-          .json({
-            error: "Workspace upload storage is full. Contact HyperScale.",
-          });
+        return res.status(413).json({
+          error: "Workspace upload storage is full. Contact HyperScale.",
+        });
       let name;
       try {
         name = decodeURIComponent(String(req.headers["x-file-name"] || ""));
