@@ -8,7 +8,7 @@ fs.mkdirSync(directory, { recursive: true });
 const logo = `data:image/png;base64,${fs.readFileSync("client/public/brand/hyperscale-h.png").toString("base64")}`;
 const blank = { ...newClient(), brand: "", issueDate: "" };
 for (const kind of documentKinds) {
-  const html = buildDocument(kind, blank, defaultSettings, logo, kind !== "Client portal");
+  const html = buildDocument(kind, blank, defaultSettings, logo, true);
   fs.writeFileSync(path.join(directory, `HyperScale-${kind.replace(/ /g, "-")}.html`), html);
 }
 fs.writeFileSync("studio-materials/blank-workspace.json", JSON.stringify({ version: 1, settings: defaultSettings, clients: [] }, null, 2));

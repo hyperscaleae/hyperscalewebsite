@@ -66,7 +66,7 @@ export default function Studio() {
   function generate(kind: typeof documentKinds[number], blank = false) {
     const c = blank ? { ...newClient(), brand: "", issueDate: "" } : client;
     if (!c) { setNotice("Choose or create a client first."); return; }
-    setPreview({ html: buildDocument(kind, c, data.settings, logo, kind !== "Client portal"), name: `HyperScale-${fileName(c.brand)}-${fileName(kind)}.html` });
+    setPreview({ html: buildDocument(kind, c, data.settings, logo, blank || kind !== "Client portal"), name: `HyperScale-${fileName(c.brand)}-${fileName(kind)}.html` });
   }
   const cField = (key: keyof Client, label: string, multiline = false, type = "text") => client && <Field key={key} label={label} value={String(client[key])} onChange={value => update({ [key]: value })} multiline={multiline} type={type} />;
   const balance = client && totals(client, data.settings);
