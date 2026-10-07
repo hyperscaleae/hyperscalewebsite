@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { api, Auth, setCsrf } from "@/lib/portal-api";
 
+const sharedPortalOrigin =
+  "https://sandybrown-guanaco-442986.hostingersite.com";
+
 export function usePortalAccess() {
   const [auth, setAuth] = useState<Auth | null>(null);
   const [state, setState] = useState<
@@ -52,6 +55,7 @@ export function AccessScreen({
 }) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const onSharedPortal = window.location.origin === sharedPortalOrigin;
   return (
     <main className="hs-access">
       <Link href="/" className="hs-logo">
@@ -66,23 +70,25 @@ export function AccessScreen({
           {state === "setup"
             ? "Set up your workspace."
             : state === "offline"
-              ? "Connect your workspace."
+              ? onSharedPortal
+                ? "Workspace unavailable."
+                : "Your workspace."
               : "Welcome back."}
         </h1>
         {state === "loading" ? (
           <p>Loading workspace…</p>
         ) : state === "offline" ? (
           <>
-            <p>
-              The shared portal needs its Node server. Your previous browser
-              records are still intact.
-            </p>
-            <a
-              className="hs-btn primary"
-              href="http://127.0.0.1:4590/dashboard"
-            >
-              Open Desktop workspace
-            </a>
+            {onSharedPortal ? (
+              <p>Please try again shortly.</p>
+            ) : (
+              <a
+                className="hs-btn primary"
+                href={`${sharedPortalOrigin}/${client ? "portal" : "dashboard"}`}
+              >
+                {client ? "Open client portal" : "Open agency workspace"}
+              </a>
+            )}
             <Link href="/inquiry">Start a project</Link>
           </>
         ) : (

@@ -12,7 +12,7 @@ The complete local data folder is `%USERPROFILE%\.hyperscale-portal`. It contain
 
 ### Hostinger (selected provider)
 
-The public preview is currently a static site. Hostinger now supports Node web apps on Business and Cloud plans; confirm the account's plan in hPanel. Use a **new Node web app** for the portal, so the existing preview remains available.
+The public preview is a static site. The separate Hostinger Business Node app is now deployed at `https://sandybrown-guanaco-442986.hostingersite.com`. Use `/dashboard` for the agency and `/portal` for clients. The existing preview remains available.
 
 Two deployment options are prepared:
 
@@ -21,7 +21,9 @@ Two deployment options are prepared:
 
 In hPanel configure `NODE_ENV=production`, `PORTAL_ORIGIN` to the exact HTTPS app URL without a trailing slash, the private encryption key, and first administrator email/password as described below. `PORTAL_DATA_DIR` must be an absolute private directory **outside** `public_html`, `nodejs`, and `hbuilds`. Those deployment folders are replaced across builds. Confirm the persistent directory with Hostinger and verify records/uploads survive both restart and redeploy before inviting clients. Keep one server process. Do not deploy this file store on an ephemeral filesystem.
 
-The hosting plan, private directory and final portal URL are not yet verified in your account. No subscription or upgrade has been purchased.
+On 7 October 2026, the Business plan and private directory `/home/u650356558/.hyperscale-portal` were verified in this account. Project records, a published proposal, the administrator session and a byte-identical uploaded/downloaded verification file survived a complete Hostinger redeployment and restart. Separate client accounts still need hosted acceptance testing; their access isolation passed the local tests. No subscription or upgrade was purchased. The current portal address is temporary.
+
+Desktop shortcuts **Open Shared Dashboard.url** and **Client Portal.url** open the hosted app. The original local launcher opens a separate local workspace and does not sync with hosting. Once the first administrator exists, remove `PORTAL_ADMIN_EMAIL` and `PORTAL_ADMIN_PASSWORD` from Hostinger's environment settings; retain the encryption key and keep it backed up privately.
 
 Official Hostinger guide: https://www.hostinger.com/support/how-to-deploy-a-nodejs-website-in-hostinger/
 
