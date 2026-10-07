@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: hyperscale-portal
+    runtime: node
+    plan: starter
+    branch: codex/recover-source
+    buildCommand: corepack enable && pnpm install --frozen-lockfile && pnpm check && pnpm build
+    startCommand: node dist/index.js
+    healthCheckPath: /api/portal/status
+    numInstances: 1
+    disk:
+      name: hyperscale-private-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 24
+      - key: NODE_ENV
+        value: production
+      - key: PORTAL_DATA_DIR
+        value: /var/data/hyperscale
+      - key: PORTAL_ORIGIN
+        sync: false
+      - key: PORTAL_ENCRYPTION_KEY
+        sync: false
+      - key: PORTAL_ADMIN_EMAIL
+        sync: false
+      - key: PORTAL_ADMIN_PASSWORD
+        sync: false

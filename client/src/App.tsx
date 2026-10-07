@@ -1,13 +1,14 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { useEffect } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LocaleProvider, useLocale } from "./contexts/LocaleContext";
 import { CopyrightPage, PrivacyPage, TermsPage } from "./pages/Legal";
 import { ExperienceAboutPage, ExperienceContactPage, ExperienceHomePage, ExperienceInsightPage, ExperienceInsightsPage, ExperienceNotFoundPage, ExperienceProjectPage, ExperienceServicePage, ExperienceServicesPage, ExperienceWorkPage } from "./pages/Experience";
-import Studio from "./pages/Studio";
+const Studio = lazy(() => import("./pages/AgencyWorkspace"));
+const ClientPortal = lazy(() => import("./pages/AgencyWorkspace").then(module => ({default:module.ClientPortal})));
 import { FeedbackPage, InquiryPage } from "./pages/WorkflowForms";
 
 const pageMeta: Record<string, [string, string]> = {
@@ -20,7 +21,8 @@ const pageMeta: Record<string, [string, string]> = {
   "/contact": ["Contact | HyperScale", "Send HyperScale an enquiry about your next stage of growth."],
   "/inquiry": ["Project enquiry | HyperScale", "Tell HyperScale about your business and project."],
   "/feedback": ["Client feedback | HyperScale", "Share feedback about your HyperScale project."],
-  "/dashboard": ["Studio dashboard | HyperScale", "Your local HyperScale client workspace."],
+  "/dashboard": ["Studio dashboard | HyperScale", "Your private HyperScale agency workspace."],
+  "/portal": ["Client portal | HyperScale", "Your private HyperScale project workspace."],
   "/privacy": ["Privacy Policy | HyperScale", "Read how HyperScale handles website enquiries and visitor data."],
   "/terms": ["Terms of Use | HyperScale", "Read the terms for using the HyperScale website."],
   "/copyright": ["Copyright Policy | HyperScale", "Read the copyright notice process for the HyperScale website."],
@@ -58,6 +60,7 @@ function Router() {
       <Route path="/inquiry" component={InquiryPage} />
       <Route path="/feedback" component={FeedbackPage} />
       <Route path="/dashboard" component={Studio} />
+      <Route path="/portal" component={ClientPortal} />
       <Route path="/privacy" component={PrivacyPage} />
       <Route path="/terms" component={TermsPage} />
       <Route path="/copyright" component={CopyrightPage} />
@@ -74,7 +77,7 @@ export default function App() {
         <TooltipProvider>
           <PageMetadata />
           <Toaster />
-          <Router />
+          <Suspense fallback={<div role="status" style={{padding:32}}>Loading…</div>}><Router /></Suspense>
         </TooltipProvider>
         </LocaleProvider>
       </ThemeProvider>

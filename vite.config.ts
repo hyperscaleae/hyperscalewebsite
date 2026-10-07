@@ -4,6 +4,7 @@ import path from "node:path";
 import { defineConfig } from "vite";
 import { enquiryRouter } from "./server/enquiries";
 import express from "express";
+import { createPortalRouter } from "./server/portal";
 
 export default defineConfig({
   plugins: [react(), tailwindcss(), {
@@ -13,6 +14,7 @@ export default defineConfig({
       api.disable("x-powered-by");
       api.use(enquiryRouter);
       server.middlewares.use("/api/enquiries", api);
+      server.middlewares.use("/api/portal", createPortalRouter());
     },
   }],
   resolve: {

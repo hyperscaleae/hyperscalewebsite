@@ -19,21 +19,22 @@ for name in ['HyperScale_Services_Overview.pdf','HyperScale_Customer_Acquisition
 for source in (root/'studio-materials/Company Profile').glob('*'):
     shutil.copy2(source, profile/'Company Profile'/source.name)
 shutil.copy2(root/'studio-materials/START-HERE.md', profile/'START HERE.md')
-shutil.copy2(root/'scripts/studio-server.cjs', profile/'Dashboard/studio-server.cjs')
+shutil.copy2(root/'dist/studio-local.cjs', profile/'Dashboard/studio-private-server.cjs')
+shutil.copy2(root/'docs/PORTAL-HOSTING.md', profile/'Dashboard/PORTAL HOSTING.md')
 shutil.copytree(root/'dist/public', profile/'Dashboard/site', dirs_exist_ok=True)
 launcher = '''$ErrorActionPreference = 'Stop'
-$studioUrl = 'http://127.0.0.1:4587'
+$studioUrl = 'http://127.0.0.1:4590'
 $studioReady = $false
-try { $studioReady = (Invoke-WebRequest "$studioUrl/__studio_health" -UseBasicParsing -TimeoutSec 2).Content -eq 'HyperScale-local-studio-v1' } catch {}
+try { $studioReady = (Invoke-WebRequest "$studioUrl/__studio_health" -UseBasicParsing -TimeoutSec 2).Content -eq 'HyperScale-private-studio-v2' } catch {}
 if (-not $studioReady) {
-  Start-Process -WindowStyle Hidden -FilePath 'C:/Users/PC/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe' -ArgumentList @(('"' + (Join-Path $PSScriptRoot 'studio-server.cjs') + '"')) -WorkingDirectory $PSScriptRoot
+  Start-Process -WindowStyle Hidden -FilePath 'C:/Users/PC/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe' -ArgumentList @(('"' + (Join-Path $PSScriptRoot 'studio-private-server.cjs') + '"')) -WorkingDirectory $PSScriptRoot
   for ($studioAttempt = 0; $studioAttempt -lt 20; $studioAttempt++) {
     Start-Sleep -Milliseconds 250
-    try { $studioReady = (Invoke-WebRequest "$studioUrl/__studio_health" -UseBasicParsing -TimeoutSec 1).Content -eq 'HyperScale-local-studio-v1' } catch {}
+    try { $studioReady = (Invoke-WebRequest "$studioUrl/__studio_health" -UseBasicParsing -TimeoutSec 1).Content -eq 'HyperScale-private-studio-v2' } catch {}
     if ($studioReady) { break }
   }
 }
-if (-not $studioReady) { throw 'The dashboard could not start. Port 4587 may be in use by another app.' }
+if (-not $studioReady) { throw 'The dashboard could not start. Port 4590 may be in use by another app.' }
 Start-Process "$studioUrl/dashboard"
 '''
 (profile/'Dashboard/Open Dashboard.ps1').write_text(launcher, encoding='utf-8')
