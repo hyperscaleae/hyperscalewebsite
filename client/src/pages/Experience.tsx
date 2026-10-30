@@ -5,6 +5,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import { EnquiryForm } from "@/components/EnquiryForm";
 import { Shell } from "./Home";
 import "./experience.css";
+import "./footer.css";
 
 const projects = [
   { slug: "alora-media", name: "Alora Media", category: "Events & digital experience", categoryAr: "الفعاليات والتجربة الرقمية", logo: "/projects/alora-logo.webp", screen: "/projects/alora.jpg", url: "https://aloramedia.ae/", focus: "A clearer route from the agency's services and portfolio to a new enquiry.", focusAr: "تسهيل الانتقال من خدمات الوكالة وأعمالها إلى التواصل معها.", context: "An events, advertising and production agency in Abu Dhabi.", contextAr: "وكالة للفعاليات والإعلان والإنتاج في أبوظبي." },
@@ -33,10 +34,53 @@ function SectionHeading({ eyebrow, title, accent, copy }: { eyebrow: string; tit
 
 export function Footer() {
   const { t } = useLocale();
-  return <footer className="xp-footer">
-    <div className="xp-footer-intro"><div><span className="xp-eyebrow">{t("From the studio", "من الاستوديو")}</span><h2>{t("Make the next move count.", "اجعل الخطوة التالية مؤثرة.")}</h2></div><Link href="/contact" className="xp-footer-cta">{t("Start a conversation", "ابدأ محادثة")}</Link></div>
-    <div className="xp-footer-main"><div className="xp-footer-insights"><strong>{t("The useful read", "قراءة مفيدة")}</strong><p>{t("Short ideas for clearer websites and better marketing decisions.", "أفكار قصيرة لمواقع أوضح وقرارات تسويقية أفضل.")}</p><button type="button" onClick={() => window.dispatchEvent(new Event("hyperscale:open-insights"))}>{t("See our insights", "اطلع على رؤانا")}</button></div><div><strong>{t("Explore", "استكشف")}</strong><Link href="/work">{t("Work", "أعمالنا")}</Link><Link href="/services">{t("Services", "خدماتنا")}</Link><Link href="/insights">{t("Insights", "رؤى")}</Link><Link href="/about">{t("About", "من نحن")}</Link><Link href="/inquiry">{t("Project enquiry", "استفسار عن مشروع")}</Link><Link href="/feedback">{t("Client feedback", "ملاحظات العملاء")}</Link></div><div><strong>{t("Contact", "التواصل")}</strong><a href="https://wa.me/971566997831" target="_blank" rel="noopener noreferrer">WhatsApp</a><a href="tel:+971566997831">+971 56 699 7831</a><a href="mailto:hello@hyperscale.marketing">hello@hyperscale.marketing</a></div></div>
-    <div className="xp-footer-bottom"><Link href="/" className="xp-footer-brand"><img src="/brand/hyperscale-h.png" alt="" />HYPERSCALE</Link><span>© 2026 HyperScale</span><div><Link href="/privacy">{t("Privacy", "الخصوصية")}</Link><Link href="/terms">{t("Terms", "الشروط")}</Link><Link href="/copyright">{t("Copyright", "حقوق النشر")}</Link></div></div>
+  return <footer id="site-footer" className="hs-footer" aria-label={t("HyperScale footer", "تذييل هايبرسكيل")}>
+    <div className="hs-footer-inner">
+      <div className="hs-footer-grid">
+        <div className="hs-footer-identity">
+          <Link href="/" className="hs-footer-logo"><img src="/brand/hyperscale-h.png" alt="" /><span>HyperScale</span></Link>
+          <p>{t("Websites, marketing and systems for the next stage of your business.", "مواقع وتسويق وأنظمة للمرحلة القادمة من أعمالك.")}</p>
+          <Link href="/contact" className="hs-footer-start">{t("Let’s work together", "لنعمل معًا")}<span>{t("Start a conversation", "ابدأ محادثة")}</span></Link>
+        </div>
+        <nav className="hs-footer-column" aria-label={t("Footer services", "خدمات التذييل")}>
+          <h2>{t("What we do", "ما نقدمه")}</h2>
+          {services.map(service => <Link key={service.slug} href={`/services/${service.slug}`}>{t(service.name, service.ar)}</Link>)}
+        </nav>
+        <nav className="hs-footer-column" aria-label={t("Footer studio", "الاستوديو")}>
+          <h2>{t("The studio", "الاستوديو")}</h2>
+          <Link href="/work">{t("Selected work", "أعمال مختارة")}</Link>
+          <Link href="/about">{t("About us", "من نحن")}</Link>
+          <Link href="/insights">{t("Insights", "رؤى")}</Link>
+          <button type="button" onClick={() => window.dispatchEvent(new Event("hyperscale:open-insights"))}>{t("Studio notes", "ملاحظات الاستوديو")}</button>
+        </nav>
+        <nav className="hs-footer-column" aria-label={t("Footer clients", "العملاء")}>
+          <h2>{t("For clients", "للعملاء")}</h2>
+          <Link href="/inquiry">{t("Start a project", "ابدأ مشروعًا")}</Link>
+          <Link href="/portal">{t("Client portal", "بوابة العملاء")}</Link>
+          <Link href="/feedback">{t("Share feedback", "شارك ملاحظاتك")}</Link>
+        </nav>
+        <div className="hs-footer-column hs-footer-contact">
+          <h2>{t("Say hello", "تواصل معنا")}</h2>
+          <a href="mailto:hello@hyperscale.marketing">hello@hyperscale.marketing</a>
+          <a href="tel:+971566997831" dir="ltr">+971 56 699 7831</a>
+          <a href="https://wa.me/971566997831" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+        </div>
+      </div>
+      <div className="hs-footer-meta">
+        <span>© {new Date().getFullYear()} HyperScale</span>
+        <nav aria-label={t("Legal", "المعلومات القانونية")}><Link href="/privacy">{t("Privacy", "الخصوصية")}</Link><Link href="/terms">{t("Terms", "الشروط")}</Link><Link href="/copyright">{t("Copyright", "حقوق النشر")}</Link></nav>
+      </div>
+      <div className="hs-footer-wordmark" aria-hidden="true" dir="ltr">
+        <svg viewBox="0 0 1200 285" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><pattern id="hs-footer-dots" width="3" height="3" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="0.48" fill="currentColor" /></pattern></defs>
+          <g className="hs-footer-echo" stroke="currentColor" strokeWidth=".65" strokeDasharray=".6 2" strokeLinecap="round">
+            <text x="5" y="233" textLength="1180" lengthAdjust="spacingAndGlyphs">HyperScale</text>
+            <text x="1" y="237" textLength="1180" lengthAdjust="spacingAndGlyphs">HyperScale</text>
+          </g>
+          <text x="10" y="228" textLength="1180" lengthAdjust="spacingAndGlyphs" fill="url(#hs-footer-dots)" stroke="currentColor" strokeWidth=".65" strokeDasharray=".6 1.5">HyperScale</text>
+        </svg>
+      </div>
+    </div>
   </footer>;
 }
 
